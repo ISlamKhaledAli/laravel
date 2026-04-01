@@ -73,6 +73,31 @@
             filter: brightness(1.05);
         }
 
+        .button.secondary {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .button.secondary:hover {
+            filter: brightness(0.95);
+        }
+
+        .button.danger {
+            background: #ef4444;
+            color: #ffffff;
+        }
+
+        .button.danger:hover {
+            filter: brightness(1.1);
+        }
+
+        .card-actions {
+            margin-top: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
         .cards {
             display: grid;
             gap: 18px;
@@ -141,7 +166,57 @@
                         <a href="{{ route('posts.show', $post['id']) }}">{{ $post['title'] }}</a>
                     </h2>
                     <p class="card-text">{{ $post['content'] }}</p>
+                    <div class="card-actions">
+                        <a href="{{ route('posts.edit', $post['id']) }}" class="button secondary">Edit</a>
+                        <button type="button" id="deleteButton{{ $post['id'] }}" class="button danger">Delete</button>
+                    </div>
                 </article>
+
+                <div id="deleteModal{{ $post['id'] }}" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px; z-index: 9999;">
+                        <div style="width: min(100%, 420px); max-width: 100%; background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: 0 30px 60px rgba(15, 23, 42, 0.16);">
+                            <p style="margin: 0 0 18px; color: #111827; font-size: 1rem; line-height: 1.6;">
+                                Are you sure you want to delete this post? This action cannot be undone.
+                            </p>
+
+                            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
+                                <button type="button" id="cancelDelete{{ $post['id'] }}" class="button secondary" style="min-height: 48px; border-radius: 14px; padding: 0 22px; background: #e2e8f0; color: #0f172a;">
+                                    Cancel
+                                </button>
+
+                                <form action="{{ route('posts.destroy', $post['id']) }}" method="POST" style="margin: 0;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="button danger" style="min-height: 48px; border-radius: 14px; padding: 0 22px;">
+                                        Confirm Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        (function() {
+                            const deleteButton = document.getElementById('deleteButton{{ $post['id'] }}');
+                            const deleteModal = document.getElementById('deleteModal{{ $post['id'] }}');
+                            const cancelDelete = document.getElementById('cancelDelete{{ $post['id'] }}');
+
+                            if (!deleteButton || !deleteModal || !cancelDelete) return;
+
+                            deleteButton.addEventListener('click', () => {
+                                deleteModal.style.display = 'flex';
+                            });
+
+                            cancelDelete.addEventListener('click', () => {
+                                deleteModal.style.display = 'none';
+                            });
+
+                            deleteModal.addEventListener('click', (event) => {
+                                if (event.target === deleteModal) {
+                                    deleteModal.style.display = 'none';
+                                }
+                            });
+                        })();
+                    </script>
             @endforeach
         </div>
     </div>

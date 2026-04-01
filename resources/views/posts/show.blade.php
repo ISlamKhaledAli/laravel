@@ -146,8 +146,55 @@
             </div>
             <div class="actions">
                 <a href="{{ route('posts.index') }}" class="secondary-link">Back to All Posts</a>
+                <a href="{{ route('posts.edit', $post['id']) }}" class="secondary-link">Edit Post</a>
+                <button type="button" id="deleteButton" class="button" style="background: #ef4444; box-shadow: 0 12px 24px rgba(239, 68, 68, 0.2);">
+                    Delete
+                </button>
             </div>
         </header>
+
+        <div id="deleteModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px; z-index: 999;">
+            <div style="width: min(100%, 420px); background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: 0 30px 60px rgba(15, 23, 42, 0.16);">
+                <p style="margin: 0 0 18px; color: #111827; font-size: 1rem; line-height: 1.6;">
+                    Are you sure you want to delete this post? This action cannot be undone.
+                </p>
+
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
+                    <button type="button" id="cancelDelete" class="secondary-link" style="min-height: 48px; border-radius: 14px; padding: 0 22px;">
+                        Cancel
+                    </button>
+
+                    <form action="{{ route('posts.destroy', $post['id']) }}" method="POST" style="margin: 0;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="button" style="background: #ef4444; min-height: 48px; border-radius: 14px; padding: 0 22px;">
+                            Confirm Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const deleteButton = document.getElementById('deleteButton');
+            const deleteModal = document.getElementById('deleteModal');
+            const cancelDelete = document.getElementById('cancelDelete');
+
+            deleteButton.addEventListener('click', () => {
+                deleteModal.style.display = 'flex';
+            });
+
+            cancelDelete.addEventListener('click', () => {
+                deleteModal.style.display = 'none';
+            });
+
+            deleteModal.addEventListener('click', (event) => {
+                if (event.target === deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+            });
+        </script>
+
 
         <p class="content">{{ $post['content'] }}</p>
     </div>

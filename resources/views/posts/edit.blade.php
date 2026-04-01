@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Post</title>
+    <title>Edit Post</title>
     <style>
         :root {
             color-scheme: dark light;
@@ -138,25 +138,26 @@
 </head>
 <body>
     <main class="panel">
-        <h1>Create a New Post</h1>
-        <p class="subtitle">Quickly add a fresh post with a clean, modern form designed for readability and focus.</p>
+        <h1>Edit Post</h1>
+        <p class="subtitle">Update your post content and save the changes.</p>
 
-        <form action="{{ route('posts.store') }}" method="POST">
+        <form action="{{ route('posts.update', $post['id']) }}" method="POST">
             @csrf
+            @method('PUT')
 
             <div class="field">
                 <label for="title">Title</label>
-                <input type="text" id="title" name="title" value="{{ old('title') }}" placeholder="Enter post title">
+                <input type="text" id="title" name="title" value="{{ old('title', $post['title']) }}" placeholder="Enter post title">
             </div>
 
             <div class="field">
                 <label for="content">Content</label>
-                <textarea id="content" name="content" placeholder="Write your post content">{{ old('content') }}</textarea>
+                <textarea id="content" name="content" placeholder="Write your post content">{{ old('content', $post['content']) }}</textarea>
             </div>
 
             <div class="actions">
-                <button type="submit" class="button">Save Post</button>
-                <a href="{{ route('posts.index') }}" class="secondary-link">Back to All Posts</a>
+                <button type="submit" class="button">Save Changes</button>
+                <a href="{{ route('posts.show', $post['id']) }}" class="secondary-link">Cancel</a>
             </div>
         </form>
     </main>
