@@ -7,3 +7,4 @@ Route::get('/', function () {
 });
 
 Route::resource('posts', PostController::class);
+Route::patch('posts/{post}/restore', [PostController::class, 'restore'])->name('posts.restore');

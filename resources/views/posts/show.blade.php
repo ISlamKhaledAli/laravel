@@ -3,133 +3,166 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>{{ $post['title'] }}</title>
+    <title>{{ $post->title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            color-scheme: dark light;
-            color: #0f172a;
-            background: #eef2ff;
-            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color-scheme: light;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --card-bg: #ffffff;
+            --border: rgba(15, 23, 42, 0.08);
         }
 
         * {
             box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
             margin: 0;
             min-height: 100vh;
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 24%),
-                        radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.18), transparent 28%),
-                        #eef2ff;
+            padding: 40px 24px;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at top left, rgba(59, 130, 246, 0.05), transparent 40%),
+                              radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.05), transparent 40%);
+            font-family: 'Outfit', system-ui, sans-serif;
+            color: var(--text-main);
         }
 
         .page {
-            width: min(100%, 760px);
-            background: #ffffff;
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            border-radius: 28px;
-            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.08);
-            padding: 32px;
+            width: min(100%, 800px);
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            box-shadow: 0 40px 100px rgba(15, 23, 42, 0.08);
+            padding: 48px;
         }
 
         .page header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 28px;
+            margin-bottom: 40px;
+            border-bottom: 1.5px solid #f1f5f9;
+            padding-bottom: 32px;
         }
 
         .page h1 {
-            margin: 0;
-            font-size: clamp(2rem, 2.4vw, 2.6rem);
-            line-height: 1.05;
-            color: #111827;
+            margin: 0 0 16px;
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            color: var(--text-main);
         }
 
         .meta {
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             flex-wrap: wrap;
-            color: #475569;
-            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
         }
 
-        .meta span {
-            background: #eef2ff;
-            border-radius: 999px;
-            padding: 10px 14px;
+        .meta .author {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .meta .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #cbd5e1;
         }
 
         .content {
             color: #334155;
-            line-height: 1.85;
-            margin: 0 0 28px;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            margin: 0 0 48px;
             white-space: pre-line;
         }
 
         .actions {
             display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
             align-items: center;
-        }
-
-        .button,
-        .secondary-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 48px;
-            padding: 0 22px;
-            border-radius: 14px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-top: 32px;
+            border-top: 1.5px solid #f1f5f9;
         }
 
         .button {
-            background: linear-gradient(135deg, #4338ca, #2563eb);
-            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 52px;
+            padding: 0 24px;
+            border-radius: 18px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
+            cursor: pointer;
         }
 
-        .button:hover {
-            transform: translateY(-1px);
-            filter: brightness(1.05);
+        .button.primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
         }
 
-        .secondary-link {
+        .button.primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .button.secondary {
+            background: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .button.secondary:hover {
             background: #f8fafc;
-            color: #334155;
-            border: 1px solid rgba(148, 163, 184, 0.35);
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
         }
 
-        .secondary-link:hover {
-            background: #eef2ff;
+        .button.danger {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .button.danger:hover {
+            background: #ef4444;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.2);
         }
 
         @media (max-width: 640px) {
             .page {
-                padding: 24px;
+                padding: 32px 24px;
+                border-radius: 0;
             }
-
-            .page header {
+            .page h1 {
+                font-size: 2.25rem;
+            }
+            .actions {
                 flex-direction: column;
                 align-items: stretch;
             }
-
-            .actions {
-                justify-content: stretch;
-            }
-
-            .button,
-            .secondary-link {
+            .button {
                 width: 100%;
             }
         }
@@ -138,18 +171,13 @@
 <body>
     <div class="page">
         <header>
-            <div>
-                <h1>{{ $post['title'] }}</h1>
-                <div class="meta">
-                    <span>Post ID: {{ $post['id'] }}</span>
-                </div>
-            </div>
-            <div class="actions">
-                <a href="{{ route('posts.index') }}" class="secondary-link">Back to All Posts</a>
-                <a href="{{ route('posts.edit', $post['id']) }}" class="secondary-link">Edit Post</a>
-                <button type="button" id="deleteButton" class="button" style="background: #ef4444; box-shadow: 0 12px 24px rgba(239, 68, 68, 0.2);">
-                    Delete
-                </button>
+            <h1>{{ $post->title }}</h1>
+            <div class="meta">
+                <span class="author">By {{ $post->user->name }}</span>
+                <span class="dot"></span>
+                <span>Post ID: {{ $post->id }}</span>
+                <span class="dot"></span>
+                <span>Created {{ $post->created_at->diffForHumans() }}</span>
             </div>
         </header>
 
@@ -164,7 +192,7 @@
                         Cancel
                     </button>
 
-                    <form action="{{ route('posts.destroy', $post['id']) }}" method="POST" style="margin: 0;">
+                    <form action="{{ route('posts.destroy', $post->id) }}" method="POST" style="margin: 0;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="button" style="background: #ef4444; min-height: 48px; border-radius: 14px; padding: 0 22px;">
@@ -196,7 +224,15 @@
         </script>
 
 
-        <p class="content">{{ $post['content'] }}</p>
+        <p class="content">{{ $post->description }}</p>
+
+        <div class="actions">
+            <a href="{{ route('posts.index') }}" class="button secondary">Back to All Posts</a>
+            <a href="{{ route('posts.edit', $post->id) }}" class="button secondary">Edit Post</a>
+            <button type="button" id="deleteButton" class="button danger">
+                Delete Post
+            </button>
+        </div>
     </div>
 </body>
 </html>
