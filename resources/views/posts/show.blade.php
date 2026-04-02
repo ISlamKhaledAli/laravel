@@ -181,57 +181,54 @@
             </div>
         </header>
 
-        <div id="deleteModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px; z-index: 999;">
-            <div style="width: min(100%, 420px); background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: 0 30px 60px rgba(15, 23, 42, 0.16);">
-                <p style="margin: 0 0 18px; color: #111827; font-size: 1rem; line-height: 1.6;">
-                    Are you sure you want to delete this post? This action cannot be undone.
-                </p>
-
-                <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
-                    <button type="button" id="cancelDelete" class="secondary-link" style="min-height: 48px; border-radius: 14px; padding: 0 22px;">
-                        Cancel
-                    </button>
-
-                    <form action="{{ route('posts.destroy', $post->id) }}" method="POST" style="margin: 0;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="button" style="background: #ef4444; min-height: 48px; border-radius: 14px; padding: 0 22px;">
-                            Confirm Delete
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            const deleteButton = document.getElementById('deleteButton');
-            const deleteModal = document.getElementById('deleteModal');
-            const cancelDelete = document.getElementById('cancelDelete');
-
-            deleteButton.addEventListener('click', () => {
-                deleteModal.style.display = 'flex';
-            });
-
-            cancelDelete.addEventListener('click', () => {
-                deleteModal.style.display = 'none';
-            });
-
-            deleteModal.addEventListener('click', (event) => {
-                if (event.target === deleteModal) {
-                    deleteModal.style.display = 'none';
-                }
-            });
-        </script>
-
-
         <p class="content">{{ $post->description }}</p>
+
+        <div style="margin-top: 60px; padding-top: 40px; border-top: 1.5px solid #f1f5f9; margin-bottom: 40px;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 24px; font-weight: 700;">Comments ({{ $post->comments->count() }})</h2>
+
+            <!-- Comments List -->
+            <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px;">
+                @forelse($post->comments as $comment)
+                    <div style="padding: 20px; background: #f8fafc; border-radius: 16px; border: 1px solid var(--border);">
+                        <p style="margin: 0; color: var(--text-main); line-height: 1.6;">
+                            <strong style="color: var(--primary);">{{ $comment->user->name ?? 'User 1' }}:</strong> {{ $comment->content }}
+                        </p>
+                        <small style="display: block; margin-top: 10px; color: var(--text-muted);">{{ $comment->created_at->diffForHumans() }}</small>
+                    </div>
+                @empty
+                    <p style="color: var(--text-muted); font-style: italic;">No comments yet. Be the first to comment!</p>
+                @endforelse
+            </div>
+
+            <!-- Add Comment Form -->
+            <form action="{{ route('comments.store', $post->id) }}" method="POST" style="background: #ffffff; border: 1px solid var(--border); padding: 24px; border-radius: 20px;">
+                @csrf
+                <div style="margin-bottom: 20px;">
+                    <label for="user_id" style="display: block; margin-bottom: 8px; font-weight: 600;">Post as User</label>
+                    <select name="user_id" id="user_id" style="width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #e2e8f0; background: #fff; font-family: inherit; font-size: 1rem;" required>
+                        <option value="" disabled selected>Select a user</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('user_id')
+                        <span style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; display: block;">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label for="content" style="display: block; margin-bottom: 8px; font-weight: 600;">Add a comment</label>
+                    <textarea name="content" id="content" rows="3" style="width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #e2e8f0; font-family: inherit; font-size: 1rem; resize: vertical;" placeholder="Write your thoughts..." required></textarea>
+                    @error('content')
+                        <span style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; display: block;">{{ $message }}</span>
+                    @enderror
+                </div>
+                <button type="submit" class="button primary" style="width: fit-content; height: 44px; padding: 0 20px; font-size: 0.9rem;">Post Comment</button>
+            </form>
+        </div>
 
         <div class="actions">
             <a href="{{ route('posts.index') }}" class="button secondary">Back to All Posts</a>
-            <a href="{{ route('posts.edit', $post->id) }}" class="button secondary">Edit Post</a>
-            <button type="button" id="deleteButton" class="button danger">
-                Delete Post
-            </button>
         </div>
     </div>
 </body>

@@ -20,7 +20,8 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::withTrashed()->findOrFail($id);
-        return view('posts.show', compact('post'));
+        $users = User::all();
+        return view('posts.show', compact('post', 'users'));
     }
 
     // Create
