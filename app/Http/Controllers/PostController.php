@@ -2,57 +2,70 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Post;
+use App\Models\User;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 
 class PostController extends Controller
 {
-    private $posts = [
-        ['id' => 1, 'title' => 'Post 1', 'content' => 'Content 1'],
-        ['id' => 2, 'title' => 'Post 2', 'content' => 'Content 2'],
-        ['id' => 3, 'title' => 'Post 3', 'content' => 'Content 3'],
-    ];
-
     // Index
     public function index()
     {
-        return view('posts.index', ['posts' => $this->posts]);
+        $posts = Post::withTrashed()->with('user')->latest()->paginate(10);
+        return view('posts.index', compact('posts'));
     }
 
     // Show
     public function show($id)
     {
-        $post = collect($this->posts)->firstWhere('id', $id);
+        $post = Post::withTrashed()->findOrFail($id);
         return view('posts.show', compact('post'));
     }
 
     // Create
     public function create()
     {
-        return view('posts.create');
+        $users = User::all();
+        return view('posts.create', compact('users'));
     }
 
-    // Store (fake)
-    public function store(Request $request)
+    // Store
+    public function store(StorePostRequest $request)
     {
+        Post::create($request->validated());
         return redirect()->route('posts.index');
     }
 
     // Edit
     public function edit($id)
     {
-        $post = collect($this->posts)->firstWhere('id', $id);
-        return view('posts.edit', compact('post'));
+        $post = Post::findOrFail($id);
+        $users = User::all();
+        return view('posts.edit', compact('post', 'users'));
     }
 
-    // Update (fake)
-    public function update(Request $request, $id)
+    // Update
+    public function update(UpdatePostRequest $request, $id)
     {
+        $post = Post::findOrFail($id);
+        $post->update($request->validated());
         return redirect()->route('posts.index');
     }
 
     // Destroy
     public function destroy($id)
     {
+        $post = Post::findOrFail($id);
+        $post->delete();
+        return redirect()->route('posts.index');
+    }
+
+    // Restore
+    public function restore($id)
+    {
+        $post = Post::withTrashed()->findOrFail($id);
+        $post->restore();
         return redirect()->route('posts.index');
     }
 }
