@@ -6,14 +6,15 @@ use App\Models\Post;
 use App\Models\User;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
     // Index
     public function index()
     {
-        $posts = Post::withTrashed()->with('user')->latest()->paginate(10);
-        return view('posts.index', compact('posts'));
+        $posts = Post::withTrashed()->with('user')->latest()->paginate(5);
+        return view('dashboard', compact('posts'));
     }
 
     // Show
@@ -34,8 +35,14 @@ class PostController extends Controller
     // Store
     public function store(StorePostRequest $request)
     {
-        Post::create($request->validated());
-        return redirect()->route('posts.index');
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('posts', 'public');
+        }
+
+        Post::create($data);
+        return redirect()->route('dashboard');
     }
 
     // Edit
@@ -50,16 +57,31 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, $id)
     {
         $post = Post::findOrFail($id);
-        $post->update($request->validated());
-        return redirect()->route('posts.index');
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+            $data['image'] = $request->file('image')->store('posts', 'public');
+        }
+
+        $post->update($data);
+        return redirect()->route('dashboard');
     }
 
     // Destroy
     public function destroy($id)
     {
-        $post = Post::findOrFail($id);
+        $post = Post::withTrashed()->findOrFail($id);
+
+        if (auth()->id() !== $post->user_id && !auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
         $post->delete();
-        return redirect()->route('posts.index');
+        return redirect()->route('dashboard');
     }
 
     // Restore
@@ -67,6 +89,6 @@ class PostController extends Controller
     {
         $post = Post::withTrashed()->findOrFail($id);
         $post->restore();
-        return redirect()->route('posts.index');
+        return redirect()->route('dashboard');
     }
 }

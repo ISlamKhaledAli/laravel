@@ -203,7 +203,7 @@
         <h1>Edit Post</h1>
         <p class="subtitle">Update your post content and save the changes.</p>
 
-        <form action="{{ route('posts.update', $post->id) }}" method="POST">
+        <form action="{{ route('posts.update', $post->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -235,9 +235,23 @@
                 @enderror
             </div>
 
+            <div class="field">
+                <label for="image">Post Image</label>
+                @if($post->image)
+                    <div style="margin-bottom: 12px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); width: 120px; height: 120px;">
+                        <img src="{{ Storage::url($post->image) }}" alt="Post image" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                @endif
+                <input type="file" id="image" name="image" accept="image/*" style="padding: 12px;">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 0;">Leave empty to keep current image.</p>
+                @error('image')
+                    <span class="error-msg">{{ $message }}</span>
+                @enderror
+            </div>
+
             <div class="actions">
                 <button type="submit" class="button">Save Changes</button>
-                <a href="{{ route('posts.show', $post->id) }}" class="secondary-link">Cancel</a>
+                <a href="{{ route('dashboard') }}" class="secondary-link">Cancel</a>
             </div>
         </form>
     </main>
