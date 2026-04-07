@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Post extends Model
 {
@@ -14,6 +15,7 @@ class Post extends Model
         'title',
         'description',
         'user_id',
+        'image',
     ];
 
     public function user()
@@ -24,5 +26,14 @@ class Post extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    protected static function booted()
+    {
+        static::deleted(function ($post) {
+            if ($post->isForceDeleting() && $post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+        });
     }
 }

@@ -203,7 +203,7 @@
         <h1>Create a New Post</h1>
         <p class="subtitle">Quickly add a fresh post with a clean, modern form designed for readability and focus.</p>
 
-        <form action="{{ route('posts.store') }}" method="POST">
+        <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="field">
@@ -235,9 +235,17 @@
                 @enderror
             </div>
 
+            <div class="field">
+                <label for="image">Post Image</label>
+                <input type="file" id="image" name="image" accept="image/*" style="padding: 12px;">
+                @error('image')
+                    <span class="error-msg">{{ $message }}</span>
+                @enderror
+            </div>
+
             <div class="actions">
                 <button type="submit" class="button">Save Post</button>
-                <a href="{{ route('posts.index') }}" class="secondary-link">Back to All Posts</a>
+                <a href="{{ route('dashboard') }}" class="secondary-link">Back to Dashboard</a>
             </div>
         </form>
     </main>

@@ -181,6 +181,12 @@
             </div>
         </header>
 
+        @if($post->image)
+            <div style="margin-bottom: 40px; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.04);">
+                <img src="{{ Storage::url($post->image) }}" alt="{{ $post->title }}" style="width: 100%; height: auto; display: block;">
+            </div>
+        @endif
+
         <p class="content">{{ $post->description }}</p>
 
         <div style="margin-top: 60px; padding-top: 40px; border-top: 1.5px solid #f1f5f9; margin-bottom: 40px;">
@@ -228,7 +234,7 @@
         </div>
 
         <div class="actions">
-            <a href="{{ route('posts.index') }}" class="button secondary">Back to All Posts</a>
+            <a href="{{ route('dashboard') }}" class="button secondary">Back to Dashboard</a>
         </div>
     </div>
 </body>
